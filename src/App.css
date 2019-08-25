@@ -1,0 +1,16 @@
+.calculator{
+  max-width: 50%;
+  border: 1px solid black;
+  margin: 0 auto;
+}
+
+.grid-container{
+  display: grid;
+  grid-template-columns: auto auto auto auto ;
+  grid-template-rows: 60px 60px 60px 60px 60px 60px;
+} 
+
+.display-container {
+  grid-column-start: span 4;
+  justify-self: end;
+}
