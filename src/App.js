@@ -137,8 +137,16 @@ async handleChange(event){
   //Phase 1 check to see if first input is operator if it is use 0 as the current value. Else if a number set value to current number else concatenate the last number to current value.
   //check if number already contains a decimal. Also check if currently an opperator. Used to prevent multiple operators chained together.
   if((this.state.hasDecimal && value === '.') || (this.state.isOperator && isNaN(value))){
+    let lastOperator = this.state.currentValue.charAt(this.state.currentValue.length -2);
+    //allow a negative to be put after an operator. 
+    if(value === ' - ' && lastOperator !== '-'){
+      this.setState({
+        currentValue: this.state.currentValue + value
+      });
+    }
+
     //change current operator if operator clicked after current operator
-    if(this.state.isOperator && this.operator(value) && value !== '.'){
+    else if(this.state.isOperator && this.operator(value) && value !== '.'){
       let currentStateValue = this.state.currentValue;
       let operatorChangeValue = currentStateValue.substring(0, currentStateValue.length - 2) + value;
       this.setState({
@@ -215,6 +223,7 @@ async handleChange(event){
   // Using the The Shunting Yard Algorithm to calculate
   async handleCalculateTotal() {
 
+    console.log("handle calc: " +  this.state.currentValue)
 
     //1st step take current values and split them into a user token stack 
     let currentValues = await this.state.currentValue.split(' ');
