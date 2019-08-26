@@ -13,7 +13,8 @@ class App extends React.Component {
       operatorStack: [],
       outputStack: [],
       hasDecimal: false,
-      hasPreviousOperator: false,
+      isOperator: false,
+      isNegative: false,
       total: null,
     }
 
@@ -23,6 +24,8 @@ class App extends React.Component {
     this.precedenceChecker = this.precedenceChecker.bind(this);
     this.previousOperatorCheck = this.previousOperatorCheck.bind(this);
     this.checkForNegativeNumber = this.checkForNegativeNumber.bind(this);
+    this.checkForDecimal = this.checkForDecimal.bind(this);
+    this.operator = this.operator.bind(this);
   }
 
   // previousOperatorCheck(currentValue) {
@@ -39,29 +42,60 @@ class App extends React.Component {
 
   // };
 
-  previousOperatorCheck(currentValue) {
+  checkForDecimal(currentValue){
     switch (currentValue) {
       case '.':
         this.setState({
           hasDecimal: true
         });
         break;
+        default:
+          break;
+  }
+}
+
+  previousOperatorCheck(currentValue) {
+    switch (currentValue) {
       case ' + ':
       case ' - ':
+        this.setState({
+          isOperator: true,
+          hasDecimal: false,
+        });
+        break;
       case ' x ':
       case ' / ':
         this.setState({
-          hasPreviousOperator: true
+          isOperator: true,
+          hasDecimal: false,
+          isNegative:false
         });
         break;
       default:
-        this.setState({
-          hasDecimal: false,
-          hasPreviousOperator: false
+       this.setState({
+          isOperator: false,
         });
         break;
     }
   }
+//check if value is an operator.
+  operator(value){
+    switch(value){
+      case ' + ':
+      case ' - ':
+      case ' x ':
+      case ' /':           
+        return 1;
+      default: 
+        return -1;  
+    }
+  };
+
+  /*change last operator{
+    if this.state.isOperator and current value is operator{
+      replace last operator with current operator
+    }
+  }*/
 
   checkForNegativeNumber(currentValue) {
     // if current value a number and previous value a negative replace with -currentvalue number
@@ -96,14 +130,59 @@ class App extends React.Component {
     }
   };
 
+async handleChange(event){
+  console.log(this.state.hasDecimal);
+  let value = event.target.value;
+
+  //Phase 1 check to see if first input is operator if it is use 0 as the current value. Else if a number set value to current number else concatenate the last number to current value.
+  //check if number already contains a decimal. Also check if currently an opperator. Used to prevent multiple operators chained together.
+  if((this.state.hasDecimal && value === '.') || (this.state.isOperator && isNaN(value))){
+    //change current operator if operator clicked after current operator
+    if(this.state.isOperator && this.operator(value) && value !== '.'){
+      let currentStateValue = this.state.currentValue;
+      let operatorChangeValue = currentStateValue.substring(0, currentStateValue.length - 2) + value;
+      this.setState({
+        currentValue: operatorChangeValue
+      });
+    }
+    //allow a decimal operand after an operator
+    if(!this.state.hasDecimal && this.state.isOperator && value === '.'){
+      this.setState({
+        currentValue: this.state.currentValue + value,
+        hasDecimal: true
+      });
+    };
+    return};
+
+    
 
 
-  async handleChange(event) {
+  if(this.state.currentValue === '0' && this.state.isOperator){
+    this.setState({
+      currentValue: this.state.currentValue + value
+    });
+  }else if(this.state.currentValue === '0'){
+    this.setState({currentValue: value});
+  }else{
+    this.setState({currentValue: this.state.currentValue + value})
+  };
+
+  //end phase 1
+  // assign boolean if operator
+  await this.previousOperatorCheck(value);
+
+  //assign boolean if decimal.
+  await this.checkForDecimal(value);
+}
+
+  async handleChange1(event) {
     let value = event.target.value;
-    console.log(this.state.hasPreviousOperator);
-    if (this.state.hasDecimal & value === '.') {
+
+    if (this.state.hasDecimal && value === '.') {
       return;
-    } else if (this.state.hasPreviousOperator) {
+    };
+
+    if (this.state.hasPreviousOperator) {
       console.log(this.state.hasPreviousOperator);
       let currentStateValue = this.state.currentValue;
       let newStateValue = currentStateValue.substring(0, currentStateValue.length - 2) + value;
@@ -113,6 +192,7 @@ class App extends React.Component {
     }
 
     if (this.state.currentValue === '0') {
+      if(this.state.isOperator)
       this.setState({
         currentValue: value
       });
@@ -130,6 +210,8 @@ class App extends React.Component {
     }
 
   };
+
+
   // Using the The Shunting Yard Algorithm to calculate
   async handleCalculateTotal() {
 
@@ -263,7 +345,10 @@ class App extends React.Component {
       userTokenStack: [],
       operatorStack: [],
       outputStack: [],
-      total: null
+      hasDecimal: false,
+      isOperator: false,
+      isNegative: false,
+      total: null,
     })
   };
 
