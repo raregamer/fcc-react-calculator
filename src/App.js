@@ -39,27 +39,27 @@ class App extends React.Component {
 
   // };
 
-  previousOperatorCheck(currentValue){
-    switch(currentValue){
+  previousOperatorCheck(currentValue) {
+    switch (currentValue) {
       case '.':
         this.setState({
           hasDecimal: true
         });
-        break; 
+        break;
       case ' + ':
       case ' - ':
       case ' x ':
       case ' / ':
         this.setState({
           hasPreviousOperator: true
-        }); 
+        });
         break;
       default:
         this.setState({
           hasDecimal: false,
           hasPreviousOperator: false
         });
-        break;  
+        break;
     }
   }
 
@@ -100,31 +100,33 @@ class App extends React.Component {
 
   async handleChange(event) {
     let value = event.target.value;
-    await this.previousOperatorCheck(value);
-    if(this.state.hasDecimal & value === '.'){
+    console.log(this.state.hasPreviousOperator);
+    if (this.state.hasDecimal & value === '.') {
       return;
-    }else if(this.state.hasPreviousOperator){
+    } else if (this.state.hasPreviousOperator) {
+      console.log(this.state.hasPreviousOperator);
       let currentStateValue = this.state.currentValue;
       let newStateValue = currentStateValue.substring(0, currentStateValue.length - 2) + value;
       this.setState({
         currentValue: newStateValue
       });
-    }else{
-      if (this.state.currentValue === '0') {
-        this.setState({
-          currentValue: value
-        });
-      } else if(value === ' - ' && this.state.currentValue[this.state.currentValue.length - 2] === '-')
-      {
-        return;
-      }
-      else {
-        this.setState({
-          currentValue: this.state.currentValue + value
-        });
-        // this.checkForNegativeNumber(value);
+    }
 
-      }
+    if (this.state.currentValue === '0') {
+      this.setState({
+        currentValue: value
+      });
+    }
+    // } else if(value === ' - ' && this.state.currentValue[this.state.currentValue.length - 2] === '-')
+    // {
+    //   return;
+    // }
+    else if(!this.state.hasPreviousOperator) {
+      this.setState({
+        currentValue: this.state.currentValue + value
+      });
+      await this.previousOperatorCheck(value);
+      // this.checkForNegativeNumber(value);
     }
 
   };
@@ -237,15 +239,15 @@ class App extends React.Component {
       }
 
     }
-    console.log(' modulu: ' + numberValues[0] );
-    if(numberValues[0]=== null){
+    console.log(' modulu: ' + numberValues[0]);
+    if (numberValues[0] === null) {
       numberValues[0] = 0;
 
     }
     let finalNumber;
-    if(numberValues[0] % 1 === 0){
-       finalNumber = numberValues[0].toFixed(0);
-    } else{ 
+    if (numberValues[0] % 1 === 0) {
+      finalNumber = numberValues[0].toFixed(0);
+    } else {
       finalNumber = numberValues[0].toFixed(4)
     }
     this.clearState();
