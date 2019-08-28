@@ -294,9 +294,9 @@ class App extends React.Component {
     }
     let finalNumber;
     if (numberValues[0] % 1 === 0) {
-      finalNumber = numberValues[0].toFixed(0);
+      finalNumber = Number(numberValues[0].toFixed(0));
     } else {
-      finalNumber = numberValues[0].toFixed(4)
+      finalNumber = Number(numberValues[0].toFixed(4));
     }
     this.clearState();
     this.setState({
