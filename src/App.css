@@ -14,3 +14,12 @@
   grid-column-start: span 4;
   justify-self: end;
 }
+
+.display-split{
+  display: grid;
+  grid-template-rows: 30px 30px;
+}
+
+.display-split > h2, .display-split > h3 {
+  margin: 0;
+}
