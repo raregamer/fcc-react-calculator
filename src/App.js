@@ -154,7 +154,7 @@ class App extends React.Component {
     // Operator check end 
 
     //Handles multiple 0 case #10
-    if (value === '0' && this.state.currentValue[0] === '0' && !this.state.hasDecimal || value === '0' && isNaN(this.state.currentValue[this.state.currentValue.length - 1]) && !this.state.hasDecimal) {
+    if (value === '0' && this.state.currentValue[0] === '0' && !this.state.hasDecimal){
       return;
     }
 
